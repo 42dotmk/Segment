@@ -26,7 +26,7 @@
     "prebuild": "node scripts/prepare.mjs",
     "build": "node scripts/build.mjs",
     "clean": "rm -rf dist build",
-    "demo": "npx --yes http-server demo -p 8080 -c-1",
+    "demo": "npx --yes http-server . -p 8080 -c-1 -o /demo/",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
