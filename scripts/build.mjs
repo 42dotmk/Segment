@@ -4,7 +4,7 @@
 // prefix is the target Unicode codepoint.
 
 import { mkdir, readFile, writeFile, rm } from "node:fs/promises";
-import { createReadStream } from "node:fs";
+import { Readable } from "node:stream";
 import { resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { globby } from "globby";
@@ -66,7 +66,15 @@ for (const file of files) {
   const char = String.fromCodePoint(cp);
   const glyphName = `${SLUG}-${m[2]}`;
 
-  const stream = createReadStream(file);
+  let svg = await readFile(file, "utf8");
+  // oslllo-svg-fixer emits path coords in the `width`/`height` range but
+  // leaves viewBox from the original source — rewrite viewBox so
+  // svgicons2svgfont scales the glyph correctly within the em box.
+  const wh = svg.match(/width="([\d.]+)"[^>]*height="([\d.]+)"/);
+  if (wh) {
+    svg = svg.replace(/viewBox="[^"]*"/, `viewBox="0 0 ${wh[1]} ${wh[2]}"`);
+  }
+  const stream = Readable.from([svg]);
   stream.metadata = { unicode: [char], name: glyphName };
   fontStream.write(stream);
 
