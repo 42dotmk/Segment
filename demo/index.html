@@ -1,80 +1,1328 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Segment — Demo</title>
+  <title>Segment — A Custom Display Font</title>
   <link rel="preload" href="../dist/segment.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../dist/segment.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
   <style>
-    :root { color-scheme: light dark; }
+    /* ── Reset & Base ──────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --dark-900: #151c1f;
+      --dark-800: #1c2428;
+      --dark-700: #232d32;
+      --dark-600: #2a363c;
+      --dark-500: #37464e;
+      --primary: #fae127;
+      --primary-hover: #f8e23e;
+      --primary-muted: rgba(250, 225, 39, 0.1);
+      --primary-glow: rgba(250, 225, 39, 0.4);
+      --secondary: #2beded;
+      --secondary-glow: rgba(43, 237, 237, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(255, 255, 255, 0.2);
+      --font-display: "JetBrains Mono", monospace;
+      --font-body: "IBM Plex Sans", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+    }
+
     body {
-      font-family: ui-sans-serif, system-ui, sans-serif;
-      margin: 0; padding: 2rem;
-      background: Canvas; color: CanvasText;
+      background: var(--dark-900);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    h1 { margin: 0 0 1rem; font-weight: 500; }
-    .sample {
-      font-family: "Segment", sans-serif;
-      font-size: 6rem;
-      line-height: 1.1;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    ::selection {
+      background: var(--primary);
+      color: var(--dark-900);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--dark-800);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--dark-600);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--dark-500);
+    }
+
+    /* ── Layout ────────────────────────────────────────── */
+    .container {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding: 0 2rem;
+      }
+    }
+
+    /* ── Section Header ────────────────────────────────── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-header__row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header__line {
+      height: 1px;
+      width: 2rem;
+      background: rgba(250, 225, 39, 0.5);
+    }
+
+    .section-header__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin: 1rem 0 2rem;
     }
-    .grid {
+
+    .section-header__subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    /* ── Buttons ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn--primary {
+      background: var(--primary);
+      color: var(--dark-900);
+    }
+
+    .btn--primary:hover {
+      background: var(--primary-hover);
+      transform: scale(1.02);
+      box-shadow: 0 0 24px var(--primary-glow);
+    }
+
+    .btn--outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn--outline:hover {
+      background: var(--primary-muted);
+    }
+
+    /* ── Reveal Animation ──────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Keyframes ─────────────────────────────────────── */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes glow-cyan {
+
+      0%,
+      100% {
+        text-shadow: 0 0 30px var(--secondary-glow), 0 0 60px rgba(43, 237, 237, 0.12);
+      }
+
+      50% {
+        text-shadow: 0 0 50px var(--secondary-glow), 0 0 90px rgba(43, 237, 237, 0.2), 0 0 30px rgba(250, 225, 39, 0.08);
+      }
+    }
+
+    @keyframes glow-yellow {
+
+      0%,
+      100% {
+        text-shadow: 0 0 30px var(--primary-glow), 0 0 60px rgba(250, 225, 39, 0.12);
+      }
+
+      50% {
+        text-shadow: 0 0 50px var(--primary-glow), 0 0 90px rgba(250, 225, 39, 0.2), 0 0 30px rgba(43, 237, 237, 0.08);
+      }
+    }
+
+    @keyframes scan-line {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+
+    @keyframes bounce-arrow {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(8px);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    /* ── Hero ──────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background: var(--dark-900);
+    }
+
+    .hero__grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(250, 225, 39, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(250, 225, 39, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.6;
+    }
+
+    .hero__radial {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(250, 225, 39, 0.08) 0%, transparent 65%);
+    }
+
+    .hero__scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(250, 225, 39, 0.2), transparent);
+      animation: scan-line 8s linear infinite;
+      pointer-events: none;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 56rem;
+    }
+
+
+    .hero__title {
+      font-family: "Segment", sans-serif;
+      font-size: clamp(4rem, 14vw, 11rem);
+      font-weight: 1;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+    }
+
+    .hero__title-cyan {
+      color: var(--secondary);
+      text-shadow: 0 0 30px var(--secondary-glow), 0 0 60px rgba(43, 237, 237, 0.15);
+      animation: glow-cyan 3s ease-in-out infinite;
+    }
+
+    .hero__title-yellow {
+      color: var(--primary);
+      text-shadow: 0 0 30px var(--primary-glow), 0 0 60px rgba(250, 225, 39, 0.15);
+      animation: glow-yellow 3s ease-in-out infinite;
+    }
+
+    .hero__subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      font-weight: 400;
+    }
+
+    .hero__byline {
+      font-family: var(--font-mono);
+      font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .hero__byline span {
+      color: var(--primary);
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero__meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      background: rgba(35, 45, 50, 0.6);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .hero__meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e;
+    }
+
+    .hero__meta-sep {
+      color: var(--border);
+    }
+
+    .hero__scroll-arrow {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      animation: bounce-arrow 2s ease-in-out infinite;
+      color: var(--text-muted);
+    }
+
+    .hero__scroll-arrow svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ── Features ──────────────────────────────────────── */
+    .features {
+      padding: 6rem 0;
+      background: var(--dark-800);
+    }
+
+    .features__grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .features__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 960px) {
+      .features__grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .feature-card {
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(250, 225, 39, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(250, 225, 39, 0.08);
+    }
+
+    .feature-card__number {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card__title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card__desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ── Type Tester ───────────────────────────────────── */
+    .tester {
+      padding: 6rem 0;
+      background: var(--dark-900);
+    }
+
+    .tester__input-wrap {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .tester__input {
+      width: 100%;
+      font-family: "Segment", sans-serif;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      padding: 1rem 1.25rem;
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .tester__input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .tester__input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-muted);
+    }
+
+    .tester__controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .tester__label {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .tester__slider {
+      flex: 1;
+      min-width: 120px;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: var(--dark-600);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .tester__slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .tester__slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .tester__size-value {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--primary);
+      min-width: 4ch;
+      text-align: right;
+    }
+
+    .tester__preview {
+      font-family: "Segment", sans-serif;
+      font-size: 5rem;
+      line-height: 1.15;
+      letter-spacing: 0.03em;
+      word-break: break-word;
+      padding: 2rem;
+      background: var(--dark-800);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      min-height: 8rem;
+      transition: font-size 0.15s ease;
+    }
+
+    /* ── Glyph Grid ────────────────────────────────────── */
+    .glyphs {
+      padding: 6rem 0;
+      background: var(--dark-800);
+    }
+
+    .glyphs__divider {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .glyphs__divider:first-of-type {
+      margin-top: 0;
+    }
+
+    .glyphs__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
       gap: 0.75rem;
     }
-    .cell {
-      border: 1px solid color-mix(in oklab, CanvasText 20%, transparent);
-      border-radius: 6px;
-      padding: 0.75rem 0.5rem 0.5rem;
+
+    .glyph-cell {
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem 0.5rem 0.75rem;
       text-align: center;
+      transition: all 0.2s ease;
     }
-    .cell .g {
+
+    .glyph-cell:hover {
+      border-color: rgba(250, 225, 39, 0.4);
+      background: rgba(250, 225, 39, 0.04);
+    }
+
+    .glyph-cell__char {
       font-family: "Segment", sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.75rem;
       line-height: 1;
       display: block;
       margin-bottom: 0.5rem;
     }
-    .cell code {
-      font-size: 0.75rem;
-      opacity: 0.6;
+
+    .glyph-cell__code {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
-    input.tester {
-      width: 100%;
-      box-sizing: border-box;
+
+    /* ── Quick Start ───────────────────────────────────── */
+    .quickstart {
+      padding: 6rem 0;
+      background: var(--dark-900);
+    }
+
+    .quickstart__grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .quickstart__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .code-block {
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .code-block:hover {
+      border-color: rgba(250, 225, 39, 0.25);
+      box-shadow: 0 0 20px rgba(250, 225, 39, 0.06);
+    }
+
+    .code-block__header {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-block__copy {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .code-block__copy:hover {
+      color: var(--primary);
+      background: var(--primary-muted);
+    }
+
+    .code-block__body {
+      padding: 1.25rem;
+    }
+
+    .code-block pre {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .code-block .kw {
+      color: var(--secondary);
+    }
+
+    .code-block .str {
+      color: var(--primary);
+    }
+
+    .code-block .cmt {
+      color: var(--text-muted);
+    }
+
+    .code-block .prop {
+      color: #f8e23e;
+    }
+
+    /* ── Credits ───────────────────────────────────────── */
+    .credits {
+      padding: 6rem 0;
+      background: var(--dark-800);
+    }
+
+    .credits__grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (min-width: 640px) {
+      .credits__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .credit-card {
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .credit-card:hover {
+      border-color: rgba(250, 225, 39, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .credit-card__role {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+
+    .credit-card__name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .credit-card__desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .credits__license {
+      background: var(--dark-700);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .credits__license-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .credits__license-text {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .credits__license-text a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .credits__license-text a:hover {
+      color: var(--primary-hover);
+    }
+
+    /* ── Marquee Banner ────────────────────────────────── */
+    .marquee-banner {
+      padding: 2.5rem 0;
+      background: var(--dark-900);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 25s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .marquee-item {
       font-family: "Segment", sans-serif;
-      font-size: 4rem;
-      padding: 1rem;
-      border: 1px solid color-mix(in oklab, CanvasText 20%, transparent);
-      border-radius: 8px;
-      background: transparent;
-      color: inherit;
-      margin-bottom: 2rem;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      white-space: nowrap;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .marquee-item:hover {
+      color: var(--primary);
+    }
+
+    .marquee-sep {
+      color: var(--dark-600);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      user-select: none;
+    }
+
+    /* ── Footer ────────────────────────────────────────── */
+    .footer {
+      padding: 3rem 0;
+      background: var(--dark-800);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .footer__inner {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+
+    .footer__copy {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer__links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer__link {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .footer__link:hover {
+      color: var(--primary);
+    }
+
+    .footer__link svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
   </style>
 </head>
+
 <body>
-  <h1>Segment</h1>
-  <div class="sample">The quick brown fox jumps over the lazy dog</div>
-  <input class="tester" value="Type to preview" aria-label="Type to preview">
-  <div class="grid" id="grid"></div>
-  <script type="module">
-    const grid = document.getElementById('grid');
-    const ranges = [[0x41, 0x5A], [0x61, 0x7A]];
-    for (const [lo, hi] of ranges) {
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="hero" id="intro">
+    <div class="hero__bg">
+      <div class="hero__grid"></div>
+      <div class="hero__radial"></div>
+      <div class="hero__scanline"></div>
+    </div>
+
+    <!-- Floating particles -->
+    <div class="particle"
+      style="width:8px;height:8px;background:rgba(250,225,39,0.4);top:18%;left:8%;animation-delay:0s;"></div>
+    <div class="particle"
+      style="width:5px;height:5px;background:rgba(43,237,237,0.35);top:28%;right:12%;animation-delay:1.2s;"></div>
+    <div class="particle"
+      style="width:4px;height:4px;background:rgba(250,225,39,0.25);bottom:32%;left:22%;animation-delay:2.4s;"></div>
+    <div class="particle"
+      style="width:6px;height:6px;background:rgba(43,237,237,0.3);top:55%;right:25%;animation-delay:3.6s;"></div>
+    <div class="particle"
+      style="width:5px;height:5px;background:rgba(250,225,39,0.3);top:72%;left:15%;animation-delay:0.8s;"></div>
+    <div class="particle"
+      style="width:3px;height:3px;background:rgba(43,237,237,0.4);top:12%;right:35%;animation-delay:4.2s;"></div>
+
+    <div class="hero__content">
+      <div class="reveal">
+        <h1 class="hero__title"><span class="hero__title-cyan">Seg</span><span class="hero__title-yellow">ment</span>
+          </span>
+      </div>
+      <div class="reveal" style="transition-delay: 0.15s;">
+        <p class="hero__subtitle">A custom display font by Pavlina Buchevska Boshkova</p>
+      </div>
+      <div class="reveal" style="transition-delay: 0.3s;">
+        <p class="hero__byline">As seen in the <span><a href="https://42.mk" target="_blank">42.mk</a></span> logo</p>
+      </div>
+      <div class="reveal" style="transition-delay: 0.45s;">
+        <div class="hero__actions">
+          <a href="https://github.com/42dotmk/Segment/releases/latest" class="btn btn--primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download Font
+          </a>
+          <a href="https://github.com/42dotmk/Segment" class="btn btn--outline">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            View on GitHub
+          </a>
+          <a href="https://www.npmjs.com/package/segment-font" class="btn btn--outline">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0h-2.666V8.667h2.666v5.331zm12 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM11.333 8.667h2.666v4h-2.666v-4z"/>
+            </svg>
+            npm
+          </a>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay: 0.6s;">
+        <div class="hero__meta">
+          <span class="hero__meta-dot"></span>
+          <span>52 glyphs</span>
+          <span class="hero__meta-sep">&middot;</span>
+          <span>OFL-1.1</span>
+          <span class="hero__meta-sep">&middot;</span>
+          <span>woff2 / woff / ttf / svg</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__scroll-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- ═══════════════ MARQUEE ═══════════════ -->
+  <div class="marquee-banner">
+    <div class="marquee-track" id="marquee"></div>
+  </div>
+
+  <!-- ═══════════════ FEATURES ═══════════════ -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__row">
+          <span class="section-header__line"></span>
+          <h2 class="section-header__title">Key Features</h2>
+          <span class="section-header__line"></span>
+        </div>
+      </div>
+
+      <div class="features__grid">
+        <div class="feature-card reveal" style="transition-delay:0s;">
+          <div class="feature-card__number">01</div>
+          <h3 class="feature-card__title">52 Hand-Crafted Glyphs</h3>
+          <p class="feature-card__desc">Uppercase A-Z and lowercase a-z, each designed as original SVG artwork with
+            meticulous attention to form.</p>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.1s;">
+          <div class="feature-card__number">02</div>
+          <h3 class="feature-card__title">4 Web Formats</h3>
+          <p class="feature-card__desc">Ships as woff2, woff, ttf, and svg with a ready-to-use CSS file and proper
+            @font-face declarations.</p>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.2s;">
+          <div class="feature-card__number">03</div>
+          <h3 class="feature-card__title">Display Character</h3>
+          <p class="feature-card__desc">Purpose-built for headlines, logos, and decorative use. Designed to make an
+            impact at large sizes.</p>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.3s;">
+          <div class="feature-card__number">04</div>
+          <h3 class="feature-card__title">Open Source</h3>
+          <p class="feature-card__desc">Licensed under SIL Open Font License 1.1. Free for personal and commercial use,
+            forever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ TYPE TESTER ═══════════════ -->
+  <section class="tester" id="try-it">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__row">
+          <span class="section-header__line"></span>
+          <h2 class="section-header__title">Try It</h2>
+          <span class="section-header__line"></span>
+        </div>
+        <p class="section-header__subtitle">Type anything to see it rendered in Segment</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.1s;">
+        <div class="tester__input-wrap">
+          <input type="text" class="tester__input" id="tester-input" value="Hello World" placeholder="Type to preview"
+            aria-label="Type to preview">
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.2s;">
+        <div class="tester__controls">
+          <span class="tester__label">Size</span>
+          <input type="range" class="tester__slider" id="size-slider" min="1.5" max="12" step="0.25" value="5">
+          <span class="tester__size-value" id="size-value">5rem</span>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.3s;">
+        <div class="tester__preview" id="tester-preview">Hello World</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ GLYPH GRID ═══════════════ -->
+  <section class="glyphs" id="glyphs">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__row">
+          <span class="section-header__line"></span>
+          <h2 class="section-header__title">Glyph Map</h2>
+          <span class="section-header__line"></span>
+        </div>
+        <p class="section-header__subtitle">52 glyphs &mdash; uppercase A-Z and lowercase a-z</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.1s;">
+        <div class="glyphs__divider">Uppercase A &ndash; Z</div>
+        <div class="glyphs__grid" id="grid-upper"></div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.2s;">
+        <div class="glyphs__divider">Lowercase a &ndash; z</div>
+        <div class="glyphs__grid" id="grid-lower"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ QUICK START ═══════════════ -->
+  <section class="quickstart" id="install">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__row">
+          <span class="section-header__line"></span>
+          <h2 class="section-header__title">Quick Start</h2>
+          <span class="section-header__line"></span>
+        </div>
+        <p class="section-header__subtitle">Get Segment into your project in seconds</p>
+      </div>
+
+      <div class="quickstart__grid">
+        <div class="code-block reveal" style="transition-delay:0s;">
+          <div class="code-block__header">
+            <span>npm</span>
+            <button type="button" class="code-block__copy"
+              onclick="copyCode(this, 'npm install segment-font')">Copy</button>
+          </div>
+          <div class="code-block__body">
+            <pre><span class="cmt"># Install the package</span>
+<span class="kw">npm install</span> segment-font</pre>
+          </div>
+        </div>
+
+        <div class="code-block reveal" style="transition-delay:0.1s;">
+          <div class="code-block__header">
+            <span>css</span>
+            <button type="button" class="code-block__copy"
+              onclick="copyCode(this, '@import &quot;segment-font/css&quot;;')">Copy</button>
+          </div>
+          <div class="code-block__body">
+            <pre><span class="cmt">/* Import the font */</span>
+<span class="kw">@import</span> <span class="str">"segment-font/css"</span>;
+
+<span class="prop">.headline</span> {
+  <span class="kw">font-family</span>: <span class="str">"Segment"</span>, sans-serif;
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-block reveal" style="transition-delay:0.2s;">
+          <div class="code-block__header">
+            <span>html</span>
+            <button type="button" class="code-block__copy"
+              onclick="copyCode(this, '&lt;link rel=&quot;stylesheet&quot; href=&quot;segment-font/dist/segment.css&quot;&gt;')">Copy</button>
+          </div>
+          <div class="code-block__body">
+            <pre><span class="cmt">&lt;!-- Direct file reference --&gt;</span>
+<span class="kw">&lt;link</span> <span class="prop">rel</span>=<span class="str">"preload"</span>
+      <span class="prop">href</span>=<span class="str">"segment-font/dist/segment.woff2"</span>
+      <span class="prop">as</span>=<span class="str">"font"</span> <span class="prop">type</span>=<span class="str">"font/woff2"</span>
+      <span class="prop">crossorigin</span><span class="kw">&gt;</span>
+<span class="kw">&lt;link</span> <span class="prop">rel</span>=<span class="str">"stylesheet"</span>
+      <span class="prop">href</span>=<span class="str">"segment-font/dist/segment.css"</span><span class="kw">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="code-block reveal" style="transition-delay:0.3s;">
+          <div class="code-block__header">
+            <span>exports</span>
+          </div>
+          <div class="code-block__body">
+            <pre><span class="cmt">// Available subpath exports</span>
+<span class="kw">import</span> <span class="str">"segment-font"</span>         <span class="cmt">// CSS</span>
+<span class="kw">import</span> <span class="str">"segment-font/css"</span>     <span class="cmt">// CSS</span>
+<span class="kw">import</span> <span class="str">"segment-font/woff2"</span>   <span class="cmt">// .woff2</span>
+<span class="kw">import</span> <span class="str">"segment-font/woff"</span>    <span class="cmt">// .woff</span>
+<span class="kw">import</span> <span class="str">"segment-font/ttf"</span>     <span class="cmt">// .ttf</span>
+<span class="kw">import</span> <span class="str">"segment-font/svg"</span>     <span class="cmt">// .svg</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CREDITS ═══════════════ -->
+  <section class="credits" id="credits">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-header__row">
+          <span class="section-header__line"></span>
+          <h2 class="section-header__title">Credits</h2>
+          <span class="section-header__line"></span>
+        </div>
+      </div>
+
+      <div class="credits__grid">
+        <div class="credit-card reveal" style="transition-delay:0s;">
+          <div class="credit-card__role">Original Design</div>
+          <h3 class="credit-card__name">Pavlina Buchevska Boshkova</h3>
+          <p class="credit-card__desc">Designed the original SVG glyphs that form the foundation of the Segment
+            typeface.</p>
+        </div>
+        <div class="credit-card reveal" style="transition-delay:0.1s;">
+          <div class="credit-card__role">Font Packaging</div>
+          <h3 class="credit-card__name">Darko Bozhinovski</h3>
+          <p class="credit-card__desc">Converted the original SVG design into a distributable multi-format web font
+            package.</p>
+        </div>
+      </div>
+
+      <div class="credits__license reveal" style="transition-delay:0.2s;">
+        <h3 class="credits__license-title">SIL Open Font License 1.1</h3>
+        <p class="credits__license-text">
+          Segment is free to use, study, modify, and redistribute. You can bundle it with any software,
+          embed it in documents, and use it for any personal or commercial project.
+          The only restriction: the font cannot be sold by itself.
+          <a href="../LICENSE">Read the full license</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <p class="footer__copy">&copy; 2025 Pavlina Buchevska Boshkova / SOFTVER 42 &mdash; Made with &#9829; in Skopje
+        </p>
+        <div class="footer__links">
+          <a href="https://github.com/42dotmk/Segment" class="footer__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                fill="currentColor" stroke="none" />
+            </svg>
+            Source
+          </a>
+          <a href="https://github.com/42dotmk/Segment/releases/latest" class="footer__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Releases
+          </a>
+          <a href="https://www.npmjs.com/package/segment-font" class="footer__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0h-2.666V8.667h2.666v5.331zm12 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM11.333 8.667h2.666v4h-2.666v-4z"
+                fill="currentColor" stroke="none" />
+            </svg>
+            npm
+          </a>
+          <a href="../LICENSE" class="footer__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            License
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script>
+    /* ── Glyph Grids ─────────────────────────── */
+    function buildGrid(containerId, lo, hi) {
+      const container = document.getElementById(containerId);
       for (let cp = lo; cp <= hi; cp++) {
         const ch = String.fromCodePoint(cp);
         const hex = cp.toString(16).padStart(4, '0').toUpperCase();
         const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.innerHTML = `<span class="g">${ch}</span><code>U+${hex}</code>`;
-        grid.appendChild(cell);
+        cell.className = 'glyph-cell';
+        cell.innerHTML = '<span class="glyph-cell__char">' + ch + '</span><code class="glyph-cell__code">U+' + hex + '</code>';
+        container.appendChild(cell);
       }
     }
+    buildGrid('grid-upper', 0x41, 0x5A);
+    buildGrid('grid-lower', 0x61, 0x7A);
+
+    /* ── Type Tester ─────────────────────────── */
+    const testerInput = document.getElementById('tester-input');
+    const testerPreview = document.getElementById('tester-preview');
+    const sizeSlider = document.getElementById('size-slider');
+    const sizeValue = document.getElementById('size-value');
+
+    testerInput.addEventListener('input', function () {
+      testerPreview.textContent = this.value || 'Type to preview';
+    });
+
+    sizeSlider.addEventListener('input', function () {
+      const val = this.value;
+      testerPreview.style.fontSize = val + 'rem';
+      sizeValue.textContent = val + 'rem';
+    });
+
+    /* ── Marquee ─────────────────────────────── */
+    (function () {
+      const words = 'Segment Typeface Display Glyphs Headline Logo Branding Creative'.split(' ');
+      const track = document.getElementById('marquee');
+      let html = '';
+      for (let r = 0; r < 2; r++) {
+        for (let i = 0; i < words.length; i++) {
+          html += '<span class="marquee-item">' + words[i] + '</span>';
+          html += '<span class="marquee-sep">/</span>';
+        }
+      }
+      track.innerHTML = html;
+    })();
+
+    /* ── Copy Code ───────────────────────────── */
+    function copyCode(btn, text) {
+      navigator.clipboard.writeText(text).then(function () {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.color = 'var(--primary)';
+        setTimeout(function () {
+          btn.textContent = orig;
+          btn.style.color = '';
+        }, 1500);
+      });
+    }
+
+    /* ── Scroll Reveal ───────────────────────── */
+    (function () {
+      var reveals = document.querySelectorAll('.reveal');
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      reveals.forEach(function (el) { observer.observe(el); });
+    })();
   </script>
 </body>
+
 </html>

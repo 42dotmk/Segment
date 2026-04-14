@@ -121,7 +121,7 @@ const css = `@font-face {
   src: url("./${SLUG}.woff2") format("woff2"),
        url("./${SLUG}.woff") format("woff"),
        url("./${SLUG}.ttf") format("truetype");
-  font-weight: normal;
+  font-weight: 0;
   font-style: normal;
   font-display: swap;
 }
@@ -130,7 +130,7 @@ const css = `@font-face {
 .font-segment {
   font-family: "${FAMILY}", sans-serif;
   font-style: normal;
-  font-weight: normal;
+  font-weight: 0;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
