@@ -1,0 +1,43 @@
+name: Release font
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Package font files
+        run: |
+          mkdir -p segment-font
+          cp dist/segment.woff2 segment-font/
+          cp dist/segment.woff  segment-font/
+          cp dist/segment.ttf   segment-font/
+          cp dist/segment.svg   segment-font/
+          cp dist/segment.css   segment-font/
+          cp LICENSE             segment-font/
+          zip -r segment-font-${{ github.ref_name }}.zip segment-font/
+          tar -czf segment-font-${{ github.ref_name }}.tar.gz segment-font/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            segment-font-${{ github.ref_name }}.zip
+            segment-font-${{ github.ref_name }}.tar.gz
+            dist/segment.woff2
+            dist/segment.ttf
