@@ -1,0 +1,9 @@
+src/
+scripts/
+build/
+demo/
+segment_font_export/
+node_modules/
+.gitignore
+*.log
+.DS_Store

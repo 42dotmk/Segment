@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Segment — Demo</title>
+  <link rel="preload" href="../dist/segment.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../dist/segment.css">
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      margin: 0; padding: 2rem;
+      background: Canvas; color: CanvasText;
+    }
+    h1 { margin: 0 0 1rem; font-weight: 500; }
+    .sample {
+      font-family: "Segment", sans-serif;
+      font-size: 6rem;
+      line-height: 1.1;
+      letter-spacing: 0.05em;
+      margin: 1rem 0 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+      gap: 0.75rem;
+    }
+    .cell {
+      border: 1px solid color-mix(in oklab, CanvasText 20%, transparent);
+      border-radius: 6px;
+      padding: 0.75rem 0.5rem 0.5rem;
+      text-align: center;
+    }
+    .cell .g {
+      font-family: "Segment", sans-serif;
+      font-size: 2.5rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .cell code {
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+    input.tester {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: "Segment", sans-serif;
+      font-size: 4rem;
+      padding: 1rem;
+      border: 1px solid color-mix(in oklab, CanvasText 20%, transparent);
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Segment</h1>
+  <div class="sample">The quick brown fox jumps over the lazy dog</div>
+  <input class="tester" value="Type to preview" aria-label="Type to preview">
+  <div class="grid" id="grid"></div>
+  <script type="module">
+    const grid = document.getElementById('grid');
+    const ranges = [[0x41, 0x5A], [0x61, 0x7A]];
+    for (const [lo, hi] of ranges) {
+      for (let cp = lo; cp <= hi; cp++) {
+        const ch = String.fromCodePoint(cp);
+        const hex = cp.toString(16).padStart(4, '0').toUpperCase();
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.innerHTML = `<span class="g">${ch}</span><code>U+${hex}</code>`;
+        grid.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>

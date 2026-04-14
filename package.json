@@ -1,0 +1,53 @@
+{
+  "name": "segment-font",
+  "version": "1.0.0",
+  "description": "Segment — a custom display/icon font.",
+  "type": "module",
+  "main": "dist/segment.css",
+  "style": "dist/segment.css",
+  "exports": {
+    ".": {
+      "style": "./dist/segment.css",
+      "default": "./dist/segment.css"
+    },
+    "./css": "./dist/segment.css",
+    "./ttf": "./dist/segment.ttf",
+    "./woff": "./dist/segment.woff",
+    "./woff2": "./dist/segment.woff2",
+    "./svg": "./dist/segment.svg",
+    "./glyph-map": "./dist/glyph-map.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prebuild": "node scripts/prepare.mjs",
+    "build": "node scripts/build.mjs",
+    "clean": "rm -rf dist build",
+    "demo": "npx --yes http-server demo -p 8080 -c-1",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "font",
+    "icon-font",
+    "segment",
+    "webfont",
+    "display-font"
+  ],
+  "author": "",
+  "license": "OFL-1.1",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "globby": "^14.0.2",
+    "oslllo-svg-fixer": "^6.0.1",
+    "svg2ttf": "^6.0.3",
+    "svgicons2svgfont": "^12.0.0",
+    "ttf2woff": "^3.0.0",
+    "wawoff2": "^2.0.1"
+  }
+}
