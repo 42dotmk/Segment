@@ -971,7 +971,7 @@
       <div class="reveal" style="transition-delay: 0.6s;">
         <div class="hero__meta">
           <span class="hero__meta-dot"></span>
-          <span>52 glyphs</span>
+          <span>62 glyphs</span>
           <span class="hero__meta-sep">&middot;</span>
           <span>OFL-1.1</span>
           <span class="hero__meta-sep">&middot;</span>
@@ -1006,8 +1006,8 @@
       <div class="features__grid">
         <div class="feature-card reveal" style="transition-delay:0s;">
           <div class="feature-card__number">01</div>
-          <h3 class="feature-card__title">52 Hand-Crafted Glyphs</h3>
-          <p class="feature-card__desc">Uppercase A-Z and lowercase a-z, each designed as original SVG artwork with
+          <h3 class="feature-card__title">62 Hand-Crafted Glyphs</h3>
+          <p class="feature-card__desc">Uppercase A-Z, lowercase a-z, and digits 0-9, each designed as original SVG artwork with
             meticulous attention to form.</p>
         </div>
         <div class="feature-card reveal" style="transition-delay:0.1s;">
@@ -1046,7 +1046,7 @@
 
       <div class="reveal" style="transition-delay:0.1s;">
         <div class="tester__input-wrap">
-          <input type="text" class="tester__input" id="tester-input" value="Hello World" placeholder="Type to preview"
+          <input type="text" class="tester__input" id="tester-input" value="Segment 42" placeholder="Type to preview"
             aria-label="Type to preview">
         </div>
       </div>
@@ -1060,7 +1060,7 @@
       </div>
 
       <div class="reveal" style="transition-delay:0.3s;">
-        <div class="tester__preview" id="tester-preview">Hello World</div>
+        <div class="tester__preview" id="tester-preview">Segment 42</div>
       </div>
     </div>
   </section>
@@ -1074,7 +1074,7 @@
           <h2 class="section-header__title">Glyph Map</h2>
           <span class="section-header__line"></span>
         </div>
-        <p class="section-header__subtitle">52 glyphs &mdash; uppercase A-Z and lowercase a-z</p>
+        <p class="section-header__subtitle">62 glyphs &mdash; uppercase A-Z, lowercase a-z, and digits 0-9</p>
       </div>
 
       <div class="reveal" style="transition-delay:0.1s;">
@@ -1085,6 +1085,11 @@
       <div class="reveal" style="transition-delay:0.2s;">
         <div class="glyphs__divider">Lowercase a &ndash; z</div>
         <div class="glyphs__grid" id="grid-lower"></div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.3s;">
+        <div class="glyphs__divider">Digits 0 &ndash; 9</div>
+        <div class="glyphs__grid" id="grid-digits"></div>
       </div>
     </div>
   </section>
@@ -1264,6 +1269,7 @@
     }
     buildGrid('grid-upper', 0x41, 0x5A);
     buildGrid('grid-lower', 0x61, 0x7A);
+    buildGrid('grid-digits', 0x30, 0x39);
 
     /* ── Type Tester ─────────────────────────── */
     const testerInput = document.getElementById('tester-input');
@@ -1283,7 +1289,7 @@
 
     /* ── Marquee ─────────────────────────────── */
     (function () {
-      const words = 'Segment Typeface Display Glyphs Headline Logo Branding Creative'.split(' ');
+      const words = 'Segment Typeface 0123456789 Display Glyphs Headline Logo Branding Creative'.split(' ');
       const track = document.getElementById('marquee');
       let html = '';
       for (let r = 0; r < 2; r++) {
